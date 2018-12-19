@@ -4,6 +4,8 @@ import sys
 import re
 import csv
 from graph_util import *
+
+#Creates processed CSV from raw data
 def create_csvs(fpx,data_dir,rtr_file,base_time,start,end):
     # data_dir = '../OVIS_DATA/LDMS_CSV/'
     def output_rtr_df_header(file_path,file_header_path,output_name,time_stamp,start_time,end_time):
@@ -17,9 +19,11 @@ def create_csvs(fpx,data_dir,rtr_file,base_time,start,end):
         df = pd.read_csv(file_path,names=headers)
         print('Read CSV into dataframe')
         
+        #Regex for flit and stall columns
         flit_rgx = 'AR_RTR_(\d_\d)_INQ_PRF_INCOMING_FLIT_VC(\d)'
         stall_rgx = 'AR_RTR_(\d_\d)_INQ_PRF_ROWBUS_STALL_CNT'
         
+        #Only care about column names with these regex
         useful_headers = ['#Time','aries_rtr_id',flit_rgx,stall_rgx]
         drop_cols = []
         for col in df.columns:
@@ -30,10 +34,12 @@ def create_csvs(fpx,data_dir,rtr_file,base_time,start,end):
             if(chk==0):
                 drop_cols.append(col)
                 
+        #Drop all other columns
         df = df.drop(drop_cols,axis=1)
         # print(df.columns)
         df =df.rename(index=str, columns={'#Time': 'time'})
         df.time = df.time.astype(int)
+        #Remove time points from dataframe not lying in the required range
         df = df[(df.time>=start_time) & (df.time<=end_time)]
         types = []
         ports = []
@@ -55,8 +61,10 @@ def create_csvs(fpx,data_dir,rtr_file,base_time,start,end):
         NUM_ROUTER = len(set(df['aries_rtr_id']))
         NUM_PORTS  = 40
         VC_COUNT = 8
+        #Store previous encountered values for stall and flit
         cache_stall = [[ 0 for j in range(0,NUM_PORTS)] for i in range(0,NUM_ROUTER)]
         cache_flit = [[0 for j in range(0,NUM_PORTS)] for i in range(0,NUM_ROUTER)]
+        
         
         idx = 0
         id_to_rname = ['' for i in range(0,NUM_ROUTER)]
@@ -70,8 +78,7 @@ def create_csvs(fpx,data_dir,rtr_file,base_time,start,end):
         
         cnt = 0
         cnt2 = 0
-
-
+        #Iterate over all rows in raw CSV and add rows to the processed CSV
         (edges,edgec) = load_edges_from_file(rtr_file)
         with open(fpx,'a') as fx:
             writer = csv.writer(fx, delimiter=',')
@@ -119,6 +126,7 @@ def create_csvs(fpx,data_dir,rtr_file,base_time,start,end):
                         cache_stall[rid][port] = tot_stall[port]
                 cnt +=1
     def output_rtr_df(time_stamp,start_time,end_time):
+        #All files which have the whole set of raw logs
         file_paths = []
         file_path_headers = []
         output_names = []
