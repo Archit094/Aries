@@ -9,6 +9,7 @@ import glog as log
 import sys
 import argparse
 
+#Read comments for corresponding link file
 parser = argparse.ArgumentParser()
 parser.add_argument('--ovis',help='Directory containing OVIS raw logs')
 parser.add_argument('--output',help='Path to processed output')
