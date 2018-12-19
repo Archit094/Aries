@@ -1,3 +1,4 @@
+#Get (router,tile number) from router name  
 def get_rtr_port(st):
 #     print(st)
     rtr  = st.split('a')[0]
@@ -6,6 +7,9 @@ def get_rtr_port(st):
     port = int(port_f[0])*8+int(port_f[1])
     return (rtr,port)
 
+#Returns 2 maps (Port is synonymous to tile)
+#1. from (rtr1,port1) to (rtr2,port2) (Two ends of a link)
+#2. from (rtr1,port1) to corresponding link color
 def load_edges_from_file(file_path = '../OVIS_DATA/rtr.out'):
     #rtr_port to adjacent rtr_port
     edges = {}
