@@ -6,7 +6,7 @@ from multiprocessing import Pool
 import glog as log
 import sys
 import argparse
-
+## Utility to run link for all files
 parser = argparse.ArgumentParser()
 parser.add_argument('--ovis',help='Directory containing OVIS raw logs')
 parser.add_argument('--rtr',help='Path to rtr.out file')
@@ -33,6 +33,7 @@ def write_csv(data,file_path):
         writer.writerows(data)
     csvFile.close()
 
+#Calculate file names to process raw data from 
 def get_base(start,end):
         times = []
         files  = os.listdir(ovis_dir)
@@ -43,6 +44,7 @@ def get_base(start,end):
                                 times.append((base,max(start,base),min(end,base+3599)))
         return times
 
+#Process raw file for a given interval
 def run_interval(times):
         start = times[0]
         end = times[1]
@@ -61,6 +63,7 @@ def run_interval(times):
         log.info('Completed processing %d %d'%(start,end))
 
 #run_interval([1497510193,1497510425])
+#Read all times from app.csv file and parallely process for all threads
 df = pd.read_csv(runs_file)
 args = []
 for index,row in df.iterrows():
