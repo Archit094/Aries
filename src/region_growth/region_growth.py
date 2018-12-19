@@ -1,9 +1,12 @@
+#Region growth modified to work for any graph
+#Each step returns a mapping from vertex number to region number
 from UF import *
 class Segmentation:
     def __init__(self,g,vals):
         self.g = g
         self.vals = vals
 
+    # Form regions (Step1 of region growth)
     def form(self,threshold):
         vals = self.vals
         g = self.g
@@ -41,6 +44,7 @@ class Segmentation:
 
         return region_nums
     
+    #Merge regions step1
     def merge1(self,region_nums,threshold):
         vals = self.vals
         g = self.g
@@ -72,6 +76,7 @@ class Segmentation:
 
         return region_nums_new 
 
+    #Merge Regions step 2
     def merge2(self,region_nums,threshold):
         vals = self.vals
         g = self.g
