@@ -1,3 +1,4 @@
+#A simple util to make region growth work for dragonfly topology
 import os
 from region_growth import *
 
